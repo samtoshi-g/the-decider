@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#0a0a0f">
+    <meta name="theme-color" content="#FBF7F4">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="description" content="Know what you actually want through rapid-fire choices. Your gut reaction reveals the truth.">
@@ -15,7 +15,7 @@
     <title>The Decider — Know What You Actually Want</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -24,20 +24,20 @@
         }
 
         :root {
-            --bg: #0a0a0f;
-            --surface: #14141f;
-            --surface-2: #1e1e2e;
-            --accent: #8b5cf6;
-            --accent-glow: rgba(139, 92, 246, 0.3);
-            --text: #f4f4f5;
-            --text-dim: #a1a1aa;
-            --success: #22c55e;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --bg: #FBF7F4;
+            --surface: #FFFFFF;
+            --surface-2: #F5EDE8;
+            --accent: #C65D3B;
+            --accent-glow: rgba(198, 93, 59, 0.2);
+            --text: #2D2A26;
+            --text-dim: #6B6560;
+            --success: #4A7C59;
+            --warning: #D4A03C;
+            --danger: #C1574F;
         }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -72,13 +72,11 @@
         }
 
         h1 {
+            font-family: 'DM Serif Display', serif;
             font-size: 2.5rem;
-            font-weight: 700;
+            font-weight: 400;
             margin-bottom: 8px;
-            background: linear-gradient(135deg, var(--accent), #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--accent);
         }
 
         .tagline {
@@ -91,8 +89,8 @@
             background: var(--surface);
             border-radius: 20px;
             padding: 30px;
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
         }
 
         /* Input Phase */
