@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Know what you actually want through rapid-fire choices. Your gut reaction reveals the truth.">
+    <meta property="og:title" content="The Decider">
+    <meta property="og:description" content="Know what you actually want through rapid-fire choices">
+    <meta property="og:type" content="website">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <title>The Decider — Know What You Actually Want</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #14141f;
+            --surface-2: #1e1e2e;
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.3);
+            --text: #f4f4f5;
+            --text-dim: #a1a1aa;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--accent), #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Input Phase */
+        #input-phase .instructions {
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .option-input {
+            flex: 1;
+            background: var(--surface-2);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 1rem;
+            color: var(--text);
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .option-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .option-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .remove-btn:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .add-option {
+            background: var(--surface-2);
+            border: 2px dashed rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 14px;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .add-option:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .start-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Battle Phase */
+        #battle-phase {
+            /* display controlled by .hidden class */
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--surface-2);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #c084fc);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .round-label {
+            text-align: center;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .vs-display {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--text-dim);
+        }
+
+        .battle-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .battle-btn {
+            background: var(--surface-2);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .battle-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            opacity: 0;
+            transition: opacity 0.15s ease;
+        }
+
+        .battle-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .battle-btn:hover {
+            transform: scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .battle-btn:hover::before {
+            opacity: 0.2;
+        }
+
+        .battle-btn:active {
+            transform: scale(0.98);
+        }
+
+        .timer-hint {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+
+        /* Results Phase */
+        #results-phase {
+            /* display controlled by .hidden class */
+        }
+
+        .winner-label {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .winner-display {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(192, 132, 252, 0.1));
+            border-radius: 16px;
+            border: 2px solid var(--accent);
+        }
+
+        .winner-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .confidence-section {
+            margin-bottom: 25px;
+        }
+
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--surface-2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .confidence-fill.high { background: var(--success); }
+        .confidence-fill.medium { background: var(--warning); }
+        .confidence-fill.low { background: var(--danger); }
+
+        .insight {
+            background: var(--surface-2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border-left: 3px solid var(--accent);
+        }
+
+        .insight strong {
+            color: var(--accent);
+        }
+
+        .rankings {
+            margin-bottom: 25px;
+        }
+
+        .rankings h3 {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .rank-number {
+            width: 28px;
+            height: 28px;
+            background: var(--surface-2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .rank-item:first-child .rank-number {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+        }
+
+        .rank-name {
+            flex: 1;
+        }
+
+        .rank-score {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .restart-btn {
+            background: var(--surface-2);
+            border: 2px solid rgba(255,255,255,0.1);
+            color: var(--text);
+        }
+
+        .restart-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .share-btn {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
+            border: none;
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+            .card { padding: 20px; }
+            .battle-btn { padding: 20px 16px; font-size: 1.1rem; }
+            .winner-display { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">🎯</div>
+            <h1>The Decider</h1>
+            <p class="tagline">Know what you actually want</p>
+        </header>
+
+        <!-- Input Phase -->
+        <div id="input-phase" class="card animate-in">
+            <p class="instructions">Enter 2-6 options you're deciding between. Your gut will reveal the truth.</p>
+            
+            <div class="options-container" id="options-container">
+                <div class="option-row">
+                    <input type="text" class="option-input" placeholder="Option 1" maxlength="50">
+                    <button class="remove-btn hidden">×</button>
+                </div>
+                <div class="option-row">
+                    <input type="text" class="option-input" placeholder="Option 2" maxlength="50">
+                    <button class="remove-btn hidden">×</button>
+                </div>
+            </div>
+
+            <button class="add-option" id="add-option">+ Add another option</button>
+            <button class="start-btn" id="start-btn" disabled>Let's Decide</button>
+        </div>
+
+        <!-- Battle Phase -->
+        <div id="battle-phase" class="card hidden">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <div class="round-label" id="round-label">Round 1 of 3</div>
+            <div class="vs-display">Pick quickly — your gut knows</div>
+            <div class="battle-options" id="battle-options">
+                <button class="battle-btn" id="option-a"><span></span></button>
+                <button class="battle-btn" id="option-b"><span></span></button>
+            </div>
+            <p class="timer-hint">⚡ Speed matters — first instinct is usually right</p>
+        </div>
+
+        <!-- Results Phase -->
+        <div id="results-phase" class="card hidden">
+            <div class="winner-label">Your heart says...</div>
+            <div class="winner-display">
+                <span class="winner-emoji">✨</span>
+                <span id="winner-name"></span>
+            </div>
+
+            <div class="confidence-section">
+                <div class="confidence-label">
+                    <span>Confidence</span>
+                    <span id="confidence-percent"></span>
+                </div>
+                <div class="confidence-bar">
+                    <div class="confidence-fill" id="confidence-fill"></div>
+                </div>
+            </div>
+
+            <div class="insight" id="insight"></div>
+
+            <div class="rankings" id="rankings-section">
+                <h3>Full Rankings</h3>
+                <div id="rankings-list"></div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn restart-btn" id="restart-btn">Start Over</button>
+                <button class="action-btn share-btn" id="share-btn">Share Result</button>
+            </div>
+        </div>
+
+        <footer class="footer">
+            Built for quick decisions & honest answers
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let options = [];
+        let battles = [];
+        let currentBattle = 0;
+        let scores = {};
+        let reactionTimes = {};
+        let totalBattles = 0;
+
+        // DOM Elements
+        const inputPhase = document.getElementById('input-phase');
+        const battlePhase = document.getElementById('battle-phase');
+        const resultsPhase = document.getElementById('results-phase');
+        const optionsContainer = document.getElementById('options-container');
+        const addOptionBtn = document.getElementById('add-option');
+        const startBtn = document.getElementById('start-btn');
+        const progressFill = document.getElementById('progress-fill');
+        const roundLabel = document.getElementById('round-label');
+        const optionABtn = document.getElementById('option-a');
+        const optionBBtn = document.getElementById('option-b');
+        const winnerName = document.getElementById('winner-name');
+        const confidencePercent = document.getElementById('confidence-percent');
+        const confidenceFill = document.getElementById('confidence-fill');
+        const insight = document.getElementById('insight');
+        const rankingsList = document.getElementById('rankings-list');
+        const restartBtn = document.getElementById('restart-btn');
+        const shareBtn = document.getElementById('share-btn');
+
+        // Initialize
+        function init() {
+            updateRemoveButtons();
+            setupInputListeners();
+        }
+
+        function setupInputListeners() {
+            optionsContainer.addEventListener('input', validateInputs);
+            optionsContainer.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && e.target.classList.contains('option-input')) {
+                    const inputs = optionsContainer.querySelectorAll('.option-input');
+                    const currentIndex = Array.from(inputs).indexOf(e.target);
+                    if (currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                    } else if (inputs.length < 6) {
+                        addOption();
+                        setTimeout(() => {
+                            const newInputs = optionsContainer.querySelectorAll('.option-input');
+                            newInputs[newInputs.length - 1].focus();
+                        }, 50);
+                    }
+                }
+            });
+        }
+
+        function updateRemoveButtons() {
+            const rows = optionsContainer.querySelectorAll('.option-row');
+            rows.forEach((row, i) => {
+                const btn = row.querySelector('.remove-btn');
+                btn.classList.toggle('hidden', rows.length <= 2);
+                btn.onclick = () => removeOption(row);
+            });
+        }
+
+        function addOption() {
+            const rows = optionsContainer.querySelectorAll('.option-row');
+            if (rows.length >= 6) return;
+
+            const row = document.createElement('div');
+            row.className = 'option-row';
+            row.innerHTML = `
+                <input type="text" class="option-input" placeholder="Option ${rows.length + 1}" maxlength="50">
+                <button class="remove-btn">×</button>
+            `;
+            optionsContainer.appendChild(row);
+            updateRemoveButtons();
+            validateInputs();
+        }
+
+        function removeOption(row) {
+            row.remove();
+            updateRemoveButtons();
+            // Renumber placeholders
+            const inputs = optionsContainer.querySelectorAll('.option-input');
+            inputs.forEach((input, i) => {
+                input.placeholder = `Option ${i + 1}`;
+            });
+            validateInputs();
+        }
+
+        function validateInputs() {
+            const inputs = optionsContainer.querySelectorAll('.option-input');
+            const filledInputs = Array.from(inputs).filter(i => i.value.trim().length > 0);
+            startBtn.disabled = filledInputs.length < 2;
+        }
+
+        addOptionBtn.addEventListener('click', addOption);
+
+        startBtn.addEventListener('click', () => {
+            const inputs = optionsContainer.querySelectorAll('.option-input');
+            options = Array.from(inputs)
+                .map(i => i.value.trim())
+                .filter(v => v.length > 0);
+
+            if (options.length < 2) return;
+
+            // Generate all possible pairs
+            battles = [];
+            for (let i = 0; i < options.length; i++) {
+                for (let j = i + 1; j < options.length; j++) {
+                    // Randomize order
+                    if (Math.random() > 0.5) {
+                        battles.push([options[i], options[j]]);
+                    } else {
+                        battles.push([options[j], options[i]]);
+                    }
+                }
+            }
+
+            // Shuffle battles
+            battles.sort(() => Math.random() - 0.5);
+
+            // Initialize scores
+            scores = {};
+            reactionTimes = {};
+            options.forEach(opt => {
+                scores[opt] = 0;
+                reactionTimes[opt] = [];
+            });
+
+            totalBattles = battles.length;
+            currentBattle = 0;
+
+            showPhase('battle');
+            showBattle();
+        });
+
+        function showPhase(phase) {
+            inputPhase.classList.add('hidden');
+            battlePhase.classList.add('hidden');
+            resultsPhase.classList.add('hidden');
+
+            const target = document.getElementById(`${phase}-phase`);
+            target.classList.remove('hidden');
+            target.classList.add('animate-in');
+        }
+
+        let battleStartTime;
+
+        function showBattle() {
+            if (currentBattle >= battles.length) {
+                showResults();
+                return;
+            }
+
+            const [a, b] = battles[currentBattle];
+            optionABtn.querySelector('span').textContent = a;
+            optionBBtn.querySelector('span').textContent = b;
+
+            progressFill.style.width = `${(currentBattle / totalBattles) * 100}%`;
+            roundLabel.textContent = `Round ${currentBattle + 1} of ${totalBattles}`;
+
+            battleStartTime = Date.now();
+        }
+
+        function handleChoice(winner, loser) {
+            const reactionTime = Date.now() - battleStartTime;
+
+            // Score based on reaction time (faster = more confident)
+            // Base score of 1, bonus up to 1 for fast reactions
+            const speedBonus = Math.max(0, 1 - (reactionTime / 3000));
+            scores[winner] += 1 + speedBonus;
+
+            reactionTimes[winner].push(reactionTime);
+
+            currentBattle++;
+            showBattle();
+        }
+
+        optionABtn.addEventListener('click', () => {
+            const [a, b] = battles[currentBattle];
+            handleChoice(a, b);
+        });
+
+        optionBBtn.addEventListener('click', () => {
+            const [a, b] = battles[currentBattle];
+            handleChoice(b, a);
+        });
+
+        function showResults() {
+            showPhase('results');
+
+            // Sort by score
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            const winner = sorted[0][0];
+            const winnerScore = sorted[0][1];
+            const runnerUpScore = sorted[1] ? sorted[1][1] : 0;
+
+            winnerName.textContent = winner;
+
+            // Calculate confidence
+            const maxPossibleScore = (options.length - 1) * 2; // Max if they always picked one option instantly
+            const scoreDiff = winnerScore - runnerUpScore;
+            const confidence = Math.min(100, Math.round((scoreDiff / maxPossibleScore) * 100 + 50));
+
+            confidencePercent.textContent = `${confidence}%`;
+            confidenceFill.style.width = `${confidence}%`;
+            confidenceFill.className = 'confidence-fill ' + 
+                (confidence >= 70 ? 'high' : confidence >= 40 ? 'medium' : 'low');
+
+            // Generate insight
+            const avgReactionTime = reactionTimes[winner].length > 0 
+                ? reactionTimes[winner].reduce((a, b) => a + b, 0) / reactionTimes[winner].length 
+                : 1000;
+
+            let insightText = '';
+            if (confidence >= 80 && avgReactionTime < 1000) {
+                insightText = `<strong>Crystal clear.</strong> You picked "${winner}" quickly and consistently. Your gut knows what it wants — trust it.`;
+            } else if (confidence >= 60) {
+                insightText = `<strong>Pretty sure.</strong> "${winner}" came out on top, and you seemed fairly decisive about it. Probably the right call.`;
+            } else if (confidence >= 40) {
+                insightText = `<strong>Close call.</strong> "${winner}" edges ahead, but you hesitated. Maybe sleep on it, or trust this result to break the tie.`;
+            } else {
+                insightText = `<strong>Genuinely torn.</strong> "${winner}" barely wins. You might need more info, or maybe neither option is quite right yet.`;
+            }
+            insight.innerHTML = insightText;
+
+            // Rankings
+            rankingsList.innerHTML = sorted.map((entry, i) => `
+                <div class="rank-item">
+                    <div class="rank-number">${i + 1}</div>
+                    <div class="rank-name">${entry[0]}</div>
+                    <div class="rank-score">${Math.round(entry[1] * 10) / 10} pts</div>
+                </div>
+            `).join('');
+        }
+
+        restartBtn.addEventListener('click', () => {
+            optionsContainer.innerHTML = `
+                <div class="option-row">
+                    <input type="text" class="option-input" placeholder="Option 1" maxlength="50">
+                    <button class="remove-btn hidden">×</button>
+                </div>
+                <div class="option-row">
+                    <input type="text" class="option-input" placeholder="Option 2" maxlength="50">
+                    <button class="remove-btn hidden">×</button>
+                </div>
+            `;
+            updateRemoveButtons();
+            validateInputs();
+            showPhase('input');
+        });
+
+        shareBtn.addEventListener('click', async () => {
+            const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+            const winner = sorted[0][0];
+            const text = `🎯 The Decider says: "${winner}"\n\nMy heart has spoken. What's yours saying?\n\nTry it: ${window.location.href}`;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({ text });
+                } catch (e) {
+                    copyToClipboard(text);
+                }
+            } else {
+                copyToClipboard(text);
+            }
+        });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                shareBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    shareBtn.textContent = 'Share Result';
+                }, 2000);
+            });
+        }
+
+        // Keyboard shortcuts for battle phase
+        document.addEventListener('keydown', (e) => {
+            if (battlePhase.classList.contains('hidden')) return;
+            if (e.key === '1' || e.key === 'ArrowUp') optionABtn.click();
+            if (e.key === '2' || e.key === 'ArrowDown') optionBBtn.click();
+        });
+
+        init();
+    </script>
+</body>
+</html>
